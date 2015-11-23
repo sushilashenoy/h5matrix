@@ -109,7 +109,7 @@ GetElements.h5 <- function(x, i, j, drop=TRUE)
   sidmem <- rhdf5::H5Screate_simple(c(length(i), length(j)))
   rhdf5::H5Sselect_index(sid, list(i, j))
   
-  mat = rhdf5::H5Dread(x@did, sidmem)[, , drop=drop]
+  mat = rhdf5::H5Dread(x@did, sid, sidmem)[, , drop=drop]
 
   return(mat)
 }
@@ -240,7 +240,7 @@ SetElements.h5 <- function(x, i, j, value)
   sid <- rhdf5::H5Dget_space(x@did)
   sidmem <- rhdf5::H5Screate_simple(c(length(i), length(j)))
   rhdf5::H5Sselect_index(sid, list(i, j))
-  rhdf5::H5read(did, value, h5spaceMem=sidmem, h5spaceFile=sid)
+  rhdf5::H5Dwrite(x@did, value, h5spaceMem=sidmem, h5spaceFile=sid)
   return(x)
 }
 
