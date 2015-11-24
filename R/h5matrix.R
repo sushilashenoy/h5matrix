@@ -224,23 +224,23 @@ SetElements.h5 <- function(x, i, j, value)
       stop("Matrix dimensions do not agree with h5.matrix instance set size.")
     }
   }
-  else { stop("Non-matrix not supported right now!") }
-  #   else if (length(value) != totalts) {
-  #     # Otherwise, make sure we are assigning the correct number of things
-  #     # (rep if necessary)
-  #     numReps <- totalts / length(value)
-  #     if (numReps != round(numReps)) 
-  #     {
-  #       stop(paste("number of items to replace is not a multiple of",
-  #                  "replacement length"))
-  #     }
-  #   }
+  else if (length(value) != totalts) {
+    # Otherwise, make sure we are assigning the correct number of things
+    # (rep if necessary)
+    numReps <- totalts / length(value)
+    if (numReps != round(numReps)) 
+    {
+      stop(paste("number of items to replace is not a multiple of",
+                 "replacement length"))
+    }
+    value <- rep(value, length.out=totalts)
+  }
   
   
   sid <- rhdf5::H5Dget_space(x@did)
   sidmem <- rhdf5::H5Screate_simple(c(length(i), length(j)))
   rhdf5::H5Sselect_index(sid, list(i, j))
-  rhdf5::H5Dwrite(x@did, value, h5spaceMem=sidmem, h5spaceFile=sid)
+  rhdf5::H5Dwrite(x@did, value, sidmem, sid)
   return(x)
 }
 
